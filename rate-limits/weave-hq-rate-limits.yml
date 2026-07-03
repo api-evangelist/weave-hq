@@ -1,0 +1,66 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Weave
+providerId: weave-hq
+created: '2026-07-03'
+modified: '2026-07-03'
+reconciled: false
+tags:
+- Communication
+- Healthcare
+- Rate Limiting
+- Quotas
+description: >-
+  Weave does not publicly publish fixed numeric rate limits for its developer API
+  (api.weaveconnect.com); the authoritative reference is gated behind a developer
+  login in the Weave Developer Portal (dp.getweave.com). API access is scoped to a
+  location subscription, and practical throughput is governed more by product-level
+  allowances than by a documented per-second request cap. The most concrete published
+  quota is on outbound bulk (mass) texting: the Messaging API exposes a
+  bulk-message-quota endpoint, indicating that mass-text volume is metered per
+  account/location. Telephony and SMS throughput are additionally bounded by
+  underlying carrier and 10DLC messaging regulations. Numeric per-endpoint limits
+  below are marked as not published and should be reconciled once portal access is
+  available.
+notes: >-
+  Clients should treat HTTP 429 as a throttling signal, honor any Retry-After
+  header, and back off exponentially with jitter. Bulk/mass texting is explicitly
+  quota-limited via the /v1/account/bulk-message-quota endpoint. Verify concrete
+  numeric limits in the authenticated Weave Developer Portal.
+sources:
+- https://dp.getweave.com
+- https://www.getweave.com/
+responseCodes:
+  throttled: 429
+limits:
+- name: API Requests
+  scope: location
+  metric: requests
+  limit: not published
+  notes: No fixed numeric per-second/per-minute request rate is documented publicly; reference is login-gated.
+- name: Bulk Message Quota
+  scope: account
+  metric: messages
+  limit: per plan (queryable)
+  notes: Mass/bulk texting is metered; remaining quota is returned by GET /v1/account/bulk-message-quota.
+- name: SMS Throughput
+  scope: phone_number
+  metric: messages
+  limit: carrier / 10DLC bound
+  notes: Outbound SMS is constrained by carrier and 10DLC campaign throughput rules, not solely by Weave.
+- name: Event Subscriptions
+  scope: location
+  metric: subscriptions
+  limit: not published
+  notes: Subscription counts per client/location are not documented publicly.
+policies:
+- name: Backoff Strategy
+  description: On HTTP 429, honor Retry-After and retry with exponential backoff plus jitter.
+- name: Bulk Messaging Governance
+  description: Check remaining bulk-message quota before sending mass texts, and respect opt-out/consent and 10DLC requirements.
+- name: Location Scoping
+  description: Requests are scoped to a single Weave location; distribute load across locations rather than exceeding a single location's allowances.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

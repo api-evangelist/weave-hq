@@ -1,0 +1,412 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Weave API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{accessToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Messaging", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List messages.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/messages",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists SMS/text messages for a location."
+        },
+        {
+          "info": { "name": "Send a message.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/messages",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"person_id\": \"\",\n  \"body\": \"Your appointment is confirmed.\"\n}" }
+          },
+          "docs": "Sends an SMS/text message from the location to a patient."
+        },
+        {
+          "info": { "name": "List chart-thread messages.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/chart-messages",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists messages within a patient chart/message thread."
+        },
+        {
+          "info": { "name": "Get bulk-message quota.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/account/bulk-message-quota",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Returns the remaining bulk (mass-text) message quota for the account."
+        },
+        {
+          "info": { "name": "List SMS phone numbers.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/sms-phone-numbers",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the SMS-capable phone numbers configured for the location."
+        },
+        {
+          "info": { "name": "Send a Quick Fill message.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/api/v2/quick-fill/message/send",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"person_ids\": [\"\"],\n  \"body\": \"We just had an opening. Reply YES to book.\"\n}" }
+          },
+          "docs": "Texts an open-appointment (Quick Fill) offer to one or more contacts."
+        },
+        {
+          "info": { "name": "Get Quick Fill message history.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/api/v2/quick-fill/message/history",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Returns the history of Quick Fill messages sent from the location."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Phone & Calls", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List call records.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/call-records",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists inbound and outbound call records for a location."
+        },
+        {
+          "info": { "name": "List call recordings.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/call-recordings",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists available call recordings for a location."
+        },
+        {
+          "info": { "name": "Get a call recording signed URL.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/call-recording/signed-url",
+            "params": [
+              { "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." },
+              { "name": "recording_id", "value": "", "type": "query", "description": "The ID of the call recording to download." }
+            ]
+          },
+          "docs": "Returns a short-lived signed URL to download a specific call recording."
+        },
+        {
+          "info": { "name": "List voicemail messages.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/voicemail-messages",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists voicemail messages for a location."
+        },
+        {
+          "info": { "name": "List call queues.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/call-queues",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the call queues configured for a location."
+        },
+        {
+          "info": { "name": "Get call queue metrics.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/call-queues/metrics",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Returns performance metrics for the location's call queues."
+        },
+        {
+          "info": { "name": "List department phone numbers.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/department/phone-numbers",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists phone numbers assigned to departments within a location."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Contacts", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List contacts.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/contacts",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the contacts (patients/customers) for a location."
+        },
+        {
+          "info": { "name": "Search contacts.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/contacts/search",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"query\": \"jane\"\n}" }
+          },
+          "docs": "Searches contacts by name, phone, email, or other attributes."
+        },
+        {
+          "info": { "name": "List contact info records.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/contact-infos",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists contact-info records (phone numbers, emails) for a location's contacts."
+        },
+        {
+          "info": { "name": "Block a contact.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/contacts/block",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"person_id\": \"\"\n}" }
+          },
+          "docs": "Blocks a contact from receiving messages from the location."
+        },
+        {
+          "info": { "name": "Unblock a contact.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/contacts/unblock",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"person_id\": \"\"\n}" }
+          },
+          "docs": "Unblocks a previously blocked contact."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Scheduling", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List appointments.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/api/v2/appointments",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists appointments for a location within an optional date range."
+        },
+        {
+          "info": { "name": "List appointment types.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/api/v2/appointment-types",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the appointment types configured for a location."
+        },
+        {
+          "info": { "name": "List schedules.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v3/schedules",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists provider/operatory schedules available for online booking."
+        },
+        {
+          "info": { "name": "List calendar events.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v3/calendars/events",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists calendar events for a location."
+        },
+        {
+          "info": { "name": "Submit an online booking request.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/api/v2/booking/email-request",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"first_name\": \"\",\n  \"last_name\": \"\",\n  \"email\": \"\",\n  \"requested_time\": \"\"\n}" }
+          },
+          "docs": "Submits an online booking (appointment request) to the practice."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Payments", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List payment methods.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/payment-methods",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists stored payment methods (cards on file) for a location's patients."
+        },
+        {
+          "info": { "name": "List finance-account payment methods.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/finance/account/payment_methods",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the payment methods attached to the location's Weave Payments finance account."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Forms", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List forms.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/forms",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the digital forms configured for a location."
+        },
+        {
+          "info": { "name": "List digital form templates.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/digitalforms",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists the digital-form templates available to a location."
+        },
+        {
+          "info": { "name": "Create form links.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/create-form-links",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"form_ids\": [\"\"],\n  \"person_id\": \"\"\n}" }
+          },
+          "docs": "Generates patient-facing links to one or more forms for sending."
+        },
+        {
+          "info": { "name": "Retrieve submitted forms.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/retrieve-forms",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Retrieves submitted form documents for a location."
+        },
+        {
+          "info": { "name": "Mark a form submission complete.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/complete-form",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"submission_id\": \"\"\n}" }
+          },
+          "docs": "Marks a submitted form as complete/processed."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Reviews", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Get provider review data.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/provider-review",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Returns review data associated with a provider/location."
+        },
+        {
+          "info": { "name": "Get review-request completion.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/review/completion",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Returns completion status/metrics for review requests sent from a location."
+        },
+        {
+          "info": { "name": "Get business listing status.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/kiosk/listing-status",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Returns the status of the location's online business listing."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Events", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List events.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.weaveconnect.com/v1/events",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }]
+          },
+          "docs": "Lists platform events (calls, messages, appointments, payments, forms) for a location."
+        },
+        {
+          "info": { "name": "Subscribe to an event stream.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/subscribe",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"topic\": \"message.received\"\n}" }
+          },
+          "docs": "Subscribes a client to a single event stream/topic."
+        },
+        {
+          "info": { "name": "Subscribe to multiple event streams.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/subscribe/multi",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"topics\": [\"message.received\", \"call.completed\"]\n}" }
+          },
+          "docs": "Subscribes a client to multiple event streams/topics at once."
+        },
+        {
+          "info": { "name": "Unsubscribe from an event stream.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.weaveconnect.com/v1/unsubscribe",
+            "params": [{ "name": "location_id", "value": "", "type": "query", "description": "The Weave location the request is scoped to." }],
+            "body": { "type": "json", "data": "{\n  \"topic\": \"message.received\"\n}" }
+          },
+          "docs": "Unsubscribes a client from an event stream/topic."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,104 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Weave
+providerId: weave-hq
+created: '2026-07-03'
+modified: '2026-07-03'
+reconciled: false
+tags:
+- Communication
+- Healthcare
+- Payments
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Weave spend. Weave is a per-location SaaS subscription rather than
+  a usage-metered API. The dominant, predictable cost is the recurring monthly plan
+  fee charged per physical location (Pro / Elite / Ultimate tiers), plus one-time
+  onboarding/setup and forms-migration fees at activation. The developer API at
+  api.weaveconnect.com carries no separate per-call charge - it is a channel into
+  the same subscription. Variable costs are limited and product-driven: bulk/mass
+  texting is quota-based (overage or add-on packs may apply), and Weave Payments
+  carries transaction processing fees on card payments collected through text-to-pay
+  and card-on-file. Payment processing rates and any bulk-text overage pricing are
+  not reconciled here.
+notes: >-
+  Cost is largely fixed and headcount-of-locations driven. For multi-location
+  practices the primary lever is the number of active locations. Payment processing
+  fees scale with collected payment volume. Verify subscription tier prices,
+  onboarding fees, bulk-text overage, and Weave Payments processing rates with Weave
+  during reconciliation.
+sources:
+- https://www.getweave.com/pricing/
+- https://www.getweave.com/
+- https://getweave.com/legal/payments/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Weave
+serviceCategory: Business Communication and Payments
+billingModel:
+  pricingCategory: Subscription
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Usage
+  - Adjustment
+focusColumns:
+  ServiceName: Weave
+  ServiceCategory: Business Communication and Payments
+  ProviderName: Weave
+  PublisherName: Weave
+  InvoiceIssuerName: Weave
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Subscription
+meters:
+- name: location_subscription
+  description: Recurring monthly subscription fee charged per active Weave location.
+  unit: locations
+  aggregation: sum
+  dimensions:
+  - account
+  - location
+  - plan
+- name: onboarding_fee
+  description: One-time onboarding/setup and forms-migration charges at activation.
+  unit: events
+  aggregation: sum
+  dimensions:
+  - account
+  - location
+- name: bulk_messages
+  description: Bulk/mass text messages sent against the per-account quota; overage may apply.
+  unit: messages
+  aggregation: sum
+  dimensions:
+  - account
+  - location
+- name: payment_processing
+  description: Card processing fees on payments collected via Weave Payments (text-to-pay, card-on-file).
+  unit: transactions
+  aggregation: sum
+  dimensions:
+  - account
+  - location
+principles:
+- name: Visibility
+  description: Track the number of active locations and their plan tiers, plus Weave Payments processing volume and bulk-text usage, to see total Weave spend.
+- name: Allocation
+  description: Map each Weave location's subscription and payment fees to the corresponding office/cost center in a multi-location practice.
+- name: Optimization
+  description: Right-size plan tiers per location to features actually used, consolidate where possible, and monitor bulk-text quota to avoid overage; compare Weave Payments processing rates against alternatives.
+- name: Accountability
+  description: Assign an owner per location for the subscription and payment fees, and review monthly against expected location count and payment volume.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

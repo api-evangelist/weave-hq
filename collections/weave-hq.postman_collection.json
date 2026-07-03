@@ -1,0 +1,413 @@
+{
+  "info": {
+    "name": "Weave API",
+    "description": "Developer surface of the Weave customer/patient communication and payments platform for small healthcare businesses. Base URL: https://api.weaveconnect.com. Authenticated with an OAuth 2.0 bearer access token issued by Weave's OIDC provider (auth.weaveconnect.com/oauth2/default). Most requests are scoped to a location via the location_id parameter. Paths are grounded in Weave's Developer Portal client; request/response detail is modeled and should be reconciled against the login-gated reference at dp.getweave.com.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{accessToken}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.weaveconnect.com", "type": "string" },
+    { "key": "accessToken", "value": "", "type": "string" },
+    { "key": "locationId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Messaging",
+      "item": [
+        {
+          "name": "List messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/messages?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "messages"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists SMS/text messages for a location."
+          }
+        },
+        {
+          "name": "Send a message",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"person_id\": \"\",\n  \"body\": \"Your appointment is confirmed.\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/messages?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "messages"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Sends an SMS/text message from the location to a patient."
+          }
+        },
+        {
+          "name": "List chart-thread messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/chart-messages?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "chart-messages"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists messages within a patient chart/message thread."
+          }
+        },
+        {
+          "name": "Get bulk-message quota",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/account/bulk-message-quota?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "account", "bulk-message-quota"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Returns the remaining bulk (mass-text) message quota for the account."
+          }
+        },
+        {
+          "name": "List SMS phone numbers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/sms-phone-numbers?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "sms-phone-numbers"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the SMS-capable phone numbers configured for the location."
+          }
+        },
+        {
+          "name": "Send a Quick Fill message",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"person_ids\": [\"\"],\n  \"body\": \"We just had an opening. Reply YES to book.\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/v2/quick-fill/message/send?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["api", "v2", "quick-fill", "message", "send"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Texts an open-appointment (Quick Fill) offer to one or more contacts."
+          }
+        },
+        {
+          "name": "Get Quick Fill message history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v2/quick-fill/message/history?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["api", "v2", "quick-fill", "message", "history"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Returns the history of Quick Fill messages sent from the location."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Phone & Calls",
+      "item": [
+        {
+          "name": "List call records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/call-records?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "call-records"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists inbound and outbound call records for a location."
+          }
+        },
+        {
+          "name": "List call recordings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/call-recordings?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "call-recordings"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists available call recordings for a location."
+          }
+        },
+        {
+          "name": "Get a call recording signed URL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/call-recording/signed-url?location_id={{locationId}}&recording_id=", "host": ["{{baseUrl}}"], "path": ["v1", "call-recording", "signed-url"], "query": [{ "key": "location_id", "value": "{{locationId}}" }, { "key": "recording_id", "value": "" }] },
+            "description": "Returns a short-lived signed URL to download a specific call recording."
+          }
+        },
+        {
+          "name": "List voicemail messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/voicemail-messages?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "voicemail-messages"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists voicemail messages for a location."
+          }
+        },
+        {
+          "name": "List call queues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/call-queues?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "call-queues"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the call queues configured for a location."
+          }
+        },
+        {
+          "name": "Get call queue metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/call-queues/metrics?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "call-queues", "metrics"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Returns performance metrics for the location's call queues."
+          }
+        },
+        {
+          "name": "List department phone numbers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/department/phone-numbers?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "department", "phone-numbers"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists phone numbers assigned to departments within a location."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contacts",
+      "item": [
+        {
+          "name": "List contacts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/contacts?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "contacts"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the contacts (patients/customers) for a location."
+          }
+        },
+        {
+          "name": "Search contacts",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"jane\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/contacts/search?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "contacts", "search"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Searches contacts by name, phone, email, or other attributes."
+          }
+        },
+        {
+          "name": "List contact info records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/contact-infos?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "contact-infos"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists contact-info records (phone numbers, emails) for a location's contacts."
+          }
+        },
+        {
+          "name": "Block a contact",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"person_id\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/contacts/block?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "contacts", "block"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Blocks a contact from receiving messages from the location."
+          }
+        },
+        {
+          "name": "Unblock a contact",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"person_id\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/contacts/unblock?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "contacts", "unblock"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Unblocks a previously blocked contact."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scheduling",
+      "item": [
+        {
+          "name": "List appointments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v2/appointments?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["api", "v2", "appointments"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists appointments for a location within an optional date range."
+          }
+        },
+        {
+          "name": "List appointment types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v2/appointment-types?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["api", "v2", "appointment-types"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the appointment types configured for a location."
+          }
+        },
+        {
+          "name": "List schedules",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v3/schedules?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v3", "schedules"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists provider/operatory schedules available for online booking."
+          }
+        },
+        {
+          "name": "List calendar events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v3/calendars/events?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v3", "calendars", "events"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists calendar events for a location."
+          }
+        },
+        {
+          "name": "Submit an online booking request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"\",\n  \"last_name\": \"\",\n  \"email\": \"\",\n  \"requested_time\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/v2/booking/email-request?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["api", "v2", "booking", "email-request"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Submits an online booking (appointment request) to the practice."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "List payment methods",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/payment-methods?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "payment-methods"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists stored payment methods (cards on file) for a location's patients."
+          }
+        },
+        {
+          "name": "List finance-account payment methods",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/finance/account/payment_methods?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "finance", "account", "payment_methods"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the payment methods attached to the location's Weave Payments finance account."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms",
+      "item": [
+        {
+          "name": "List forms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/forms?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "forms"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the digital forms configured for a location."
+          }
+        },
+        {
+          "name": "List digital form templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/digitalforms?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "digitalforms"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists the digital-form templates available to a location."
+          }
+        },
+        {
+          "name": "Create form links",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"form_ids\": [\"\"],\n  \"person_id\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/create-form-links?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "create-form-links"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Generates patient-facing links to one or more forms for sending."
+          }
+        },
+        {
+          "name": "Retrieve submitted forms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/retrieve-forms?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "retrieve-forms"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Retrieves submitted form documents for a location."
+          }
+        },
+        {
+          "name": "Mark a form submission complete",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"submission_id\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/complete-form?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "complete-form"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Marks a submitted form as complete/processed."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get provider review data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/provider-review?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "provider-review"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Returns review data associated with a provider/location."
+          }
+        },
+        {
+          "name": "Get review-request completion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/review/completion?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "review", "completion"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Returns completion status/metrics for review requests sent from a location."
+          }
+        },
+        {
+          "name": "Get business listing status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/kiosk/listing-status?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "kiosk", "listing-status"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Returns the status of the location's online business listing."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/v1/events?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "events"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Lists platform events (calls, messages, appointments, payments, forms) for a location."
+          }
+        },
+        {
+          "name": "Subscribe to an event stream",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"topic\": \"message.received\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/subscribe?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "subscribe"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Subscribes a client to a single event stream/topic."
+          }
+        },
+        {
+          "name": "Subscribe to multiple event streams",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"topics\": [\"message.received\", \"call.completed\"]\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/subscribe/multi?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "subscribe", "multi"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Subscribes a client to multiple event streams/topics at once."
+          }
+        },
+        {
+          "name": "Unsubscribe from an event stream",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"topic\": \"message.received\"\n}" },
+            "url": { "raw": "{{baseUrl}}/v1/unsubscribe?location_id={{locationId}}", "host": ["{{baseUrl}}"], "path": ["v1", "unsubscribe"], "query": [{ "key": "location_id", "value": "{{locationId}}" }] },
+            "description": "Unsubscribes a client from an event stream/topic."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Weave
+providerId: weave-hq
+created: '2026-07-03'
+modified: '2026-07-03'
+reconciled: false
+tags:
+- Communication
+- Healthcare
+- Payments
+- Plans
+- Subscription
+description: >-
+  Weave is sold as a per-location software subscription, not as a metered API
+  product. Access to the platform - and therefore to the developer API at
+  api.weaveconnect.com - comes with a Weave subscription for each physical office
+  (location). Weave publishes a Pro plan as its entry point and gates its higher
+  Elite and Ultimate tiers behind a sales conversation with custom quotes. Onboarding
+  and forms-migration fees apply on top of the recurring subscription. There is no
+  separate published price for API calls; the API is a channel into the same
+  location subscription. Exact tier prices below reflect third-party reporting and
+  should be reconciled against a current Weave quote.
+notes: >-
+  Weave bills per physical location - a multi-office practice pays the monthly fee
+  per office. Third-party sources report a one-time onboarding/setup fee (roughly
+  $500-$750) and a digital-forms migration fee (about $200 up front, ~$20 per
+  additional form). Elite and Ultimate pricing is not published. Verify all figures
+  with Weave sales during reconciliation.
+sources:
+- https://www.getweave.com/pricing/
+- https://www.getweave.com/
+- https://dp.getweave.com
+plans:
+- id: weave-pro
+  name: Pro
+  type: paid
+  description: >-
+    Published entry-tier per-location subscription bundling Weave's core
+    communication suite - VoIP phone, two-way texting, scheduling and reminders,
+    and the base of the developer platform.
+  entries:
+  - label: Per-Location Subscription
+    name: pro_subscription
+    type: flat
+    metric: location
+    limit: -1
+    timeFrame: month
+    geo: usa
+    unit: 1
+    price: from ~$249/location/month (per third-party reporting)
+    userMultiplied: false
+  elements:
+  - name: VoIP Phones
+  - name: Two-Way Texting
+  - name: Scheduling and Reminders
+  - name: Developer API Access
+- id: weave-elite
+  name: Elite
+  type: paid
+  description: >-
+    Mid-tier per-location plan adding capabilities such as payments (text-to-pay),
+    digital forms, and reviews/reputation on top of Pro. Priced by quote.
+  entries:
+  - label: Per-Location Subscription
+    name: elite_subscription
+    type: flat
+    metric: location
+    limit: -1
+    timeFrame: month
+    geo: usa
+    unit: 1
+    price: custom quote (third-party reports mid-$300s/location/month for dental)
+    userMultiplied: false
+  elements:
+  - name: Everything in Pro
+  - name: Weave Payments (Text to Pay)
+  - name: Digital Forms
+  - name: Reviews and Reputation
+- id: weave-ultimate
+  name: Ultimate
+  type: enterprise
+  description: >-
+    Top-tier per-location plan with the full Weave feature set, advanced analytics,
+    and priority support. Priced by custom quote.
+  entries:
+  - label: Per-Location Subscription
+    name: ultimate_subscription
+    type: flat
+    metric: location
+    limit: -1
+    timeFrame: month
+    geo: usa
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Everything in Elite
+  - name: Advanced Analytics
+  - name: Priority Support
+- id: weave-onboarding
+  name: Onboarding & Setup (One-Time)
+  type: paid
+  description: >-
+    One-time onboarding/setup charge applied when a location activates Weave, plus
+    optional digital-forms migration fees.
+  entries:
+  - label: Onboarding / Setup Fee
+    name: onboarding_fee
+    type: flat
+    metric: location
+    limit: -1
+    timeFrame: one-time
+    geo: usa
+    unit: 1
+    price: one-time ~$500-$750 (per third-party reporting)
+    userMultiplied: false
+  - label: Forms Migration
+    name: forms_migration
+    type: flat
+    metric: forms
+    limit: -1
+    timeFrame: one-time
+    geo: usa
+    unit: 1
+    price: ~$200 up front, ~$20 per additional form (per third-party reporting)
+    userMultiplied: false
+  elements:
+  - name: Guided Onboarding
+  - name: Forms Migration
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

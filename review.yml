@@ -1,0 +1,141 @@
+aid: weave-hq
+name: Weave
+review:
+  question: Does Weave expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-03'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. Weave's documented developer surface is a
+    request/response REST API over HTTPS at https://api.weaveconnect.com,
+    authenticated with OAuth 2.0 bearer tokens from Weave's OIDC provider. A
+    WebSocket endpoint (wss://api.weaveconnect.com/v2/client-manager/ws) is
+    observable in the Weave Developer Portal's own client configuration, but it is
+    an internal transport used by Weave's first-party applications (a
+    "client-manager" realtime channel), not a documented public developer
+    WebSocket API. Near-real-time integration for third parties is instead exposed
+    through the REST events/subscription endpoints (/v1/events, /v1/subscribe,
+    /v1/subscribe/multi, /v1/unsubscribe). Because there is no documented public
+    server-push transport on Weave's developer API, no AsyncAPI document was
+    created.
+findings:
+  summary: |
+    Weave does not publish a documented public WebSocket API for third-party
+    developers. Weave is a customer/patient communication and payments platform
+    for small healthcare businesses (dental, optometry, veterinary, medical, and
+    specialty practices). Its developer platform is a REST API served at
+    https://api.weaveconnect.com and authenticated with OAuth 2.0 bearer access
+    tokens issued by Weave's OIDC provider (issuer https://oidc.weaveconnect.com;
+    token endpoints under https://auth.weaveconnect.com/oauth2/default). The
+    authoritative API reference lives in the Weave Developer Portal at
+    https://dp.getweave.com, which is a single-page app gated behind a developer
+    login. A real WebSocket endpoint,
+    wss://api.weaveconnect.com/v2/client-manager/ws, is present in the portal's
+    published runtime configuration, but it is an internal first-party app
+    transport (a client-manager realtime channel), not a documented public
+    developer WebSocket surface. For third-party real-time needs, Weave exposes
+    REST event and subscription endpoints rather than a public ws:// / wss:// API.
+  openSource: |
+    Weave is a proprietary, closed-source commercial SaaS platform. Its GitHub
+    organization (https://github.com/getweave) exists but publishes no public
+    repositories. There is no self-hostable or open-source component to Weave's
+    API; access is tied to a paid per-location subscription.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.weaveconnect.com
+      documented: true
+      note: Primary developer API. OAuth 2.0 bearer tokens; requests scoped to a location. Reference is login-gated at dp.getweave.com.
+    - protocol: REST Events / Subscriptions
+      scheme: https
+      baseURL: https://api.weaveconnect.com
+      documented: true
+      note: /v1/events plus /v1/subscribe, /v1/subscribe/multi, /v1/unsubscribe provide the near-real-time integration path over REST, not a socket.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: >-
+        wss://api.weaveconnect.com/v2/client-manager/ws is observable in the
+        Weave Developer Portal runtime config, but it is an internal first-party
+        app transport, not a documented public developer WebSocket API.
+  endpointsConfirmed:
+    - GET  https://api.weaveconnect.com/v1/messages
+    - GET  https://api.weaveconnect.com/v1/chart-messages
+    - GET  https://api.weaveconnect.com/v1/account/bulk-message-quota
+    - GET  https://api.weaveconnect.com/v1/sms-phone-numbers
+    - POST https://api.weaveconnect.com/api/v2/quick-fill/message/send
+    - GET  https://api.weaveconnect.com/api/v2/quick-fill/message/history
+    - GET  https://api.weaveconnect.com/v1/call-records
+    - GET  https://api.weaveconnect.com/v1/call-recordings
+    - GET  https://api.weaveconnect.com/v1/call-recording/signed-url
+    - GET  https://api.weaveconnect.com/v1/voicemail-messages
+    - GET  https://api.weaveconnect.com/v1/call-queues
+    - GET  https://api.weaveconnect.com/v1/call-queues/metrics
+    - GET  https://api.weaveconnect.com/v1/department/phone-numbers
+    - GET  https://api.weaveconnect.com/v1/contacts
+    - POST https://api.weaveconnect.com/v1/contacts/search
+    - GET  https://api.weaveconnect.com/v1/contact-infos
+    - POST https://api.weaveconnect.com/v1/contacts/block
+    - POST https://api.weaveconnect.com/v1/contacts/unblock
+    - GET  https://api.weaveconnect.com/api/v2/appointments
+    - GET  https://api.weaveconnect.com/api/v2/appointment-types
+    - GET  https://api.weaveconnect.com/v3/schedules
+    - GET  https://api.weaveconnect.com/v3/calendars/events
+    - POST https://api.weaveconnect.com/api/v2/booking/email-request
+    - GET  https://api.weaveconnect.com/v1/payment-methods
+    - GET  https://api.weaveconnect.com/v1/finance/account/payment_methods
+    - GET  https://api.weaveconnect.com/v1/forms
+    - GET  https://api.weaveconnect.com/v1/digitalforms
+    - POST https://api.weaveconnect.com/v1/create-form-links
+    - GET  https://api.weaveconnect.com/v1/retrieve-forms
+    - POST https://api.weaveconnect.com/v1/complete-form
+    - GET  https://api.weaveconnect.com/v1/provider-review
+    - GET  https://api.weaveconnect.com/v1/review/completion
+    - GET  https://api.weaveconnect.com/v1/kiosk/listing-status
+    - GET  https://api.weaveconnect.com/v1/events
+    - POST https://api.weaveconnect.com/v1/subscribe
+    - POST https://api.weaveconnect.com/v1/subscribe/multi
+    - POST https://api.weaveconnect.com/v1/unsubscribe
+  endpointsModeled: |
+    The path list and base URL above are grounded in Weave's own published
+    Developer Portal client (its runtime configuration and the API calls it makes
+    against https://api.weaveconnect.com), so path/method coverage is
+    high-confidence. However, because the authoritative reference at
+    dp.getweave.com is gated behind a developer login, the request bodies, query
+    parameters (including exact location scoping), response schemas, and HTTP verbs
+    for mutation endpoints in the OpenAPI document are modeled and should be
+    reconciled against the official reference once portal access is available. The
+    location_id query parameter is inferred as the location-scoping mechanism.
+  websocketNote: |
+    A single WebSocket endpoint (wss://api.weaveconnect.com/v2/client-manager/ws)
+    exists and is used by Weave's own applications, but it is not documented as a
+    public developer API. The public/documented developer integration path for
+    real-time activity is the REST events + subscription endpoints. Answer to the
+    review question is therefore false.
+sources:
+  - url: https://dp.getweave.com
+    type: Documentation
+    note: Weave Developer Portal (SPA). Login-gated. Runtime config exposes base API https://api.weaveconnect.com, OIDC issuer https://oidc.weaveconnect.com, and an internal wss://api.weaveconnect.com/v2/client-manager/ws transport.
+  - url: https://www.getweave.com
+    type: Website
+    note: Product marketing - communication, phone, texting, scheduling, payments, forms, reviews for healthcare practices.
+  - url: https://www.getweave.com/pricing/
+    type: Pricing
+    note: Per-location subscription; Pro published as entry tier, Elite/Ultimate by quote.
+  - url: https://www.getweave.com/integrations/
+    type: Integrations
+    note: Integration/partner ecosystem across practice management and EHR systems.
+  - url: https://github.com/getweave
+    type: SourceCode
+    note: GitHub organization exists (name "Weave") but publishes no public repositories; platform is closed-source.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No public WebSocket API surface is documented, and Weave's own developer API
+    is request/response REST over HTTPS with an OAuth 2.0 bearer scheme. No
+    AsyncAPI document was created because there is no documented public
+    server-push transport on Weave's developer API; the only WebSocket observed is
+    an internal first-party app channel, and third-party real-time integration is
+    offered via REST event/subscription endpoints.
