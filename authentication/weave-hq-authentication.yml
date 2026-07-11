@@ -1,0 +1,28 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/weave-hq-openapi.yml
+summary:
+  types:
+  - http
+  - oauth2
+  oauth2_flows:
+  - authorizationCode
+schemes:
+- name: oauth2
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://auth.weaveconnect.com/oauth2/default/v1/authorize
+    tokenUrl: https://auth.weaveconnect.com/oauth2/default/v1/token
+    scopes: 0
+  description: 'OAuth 2.0 access token issued by Weave''s OIDC provider. Authorization and token
+    endpoints are served under https://auth.weaveconnect.com/oauth2/default (issuer https://oidc.weaveconnect.com).
+    Present as `Authorization: Bearer ACCESS_TOKEN`.'
+  sources:
+  - openapi/weave-hq-openapi.yml
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: 'OAuth 2.0 bearer access token passed as `Authorization: Bearer ACCESS_TOKEN`.'
+  sources:
+  - openapi/weave-hq-openapi.yml
