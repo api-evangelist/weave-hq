@@ -203,6 +203,10 @@ apis:
     unsubscribe a client to one or many event streams (calls, messages, appointments,
     payments, forms) so integrations can react to activity in near real time.
 common:
+- type: Authentication
+  url: authentication/weave-hq-authentication.yml
+- type: OAuthScopes
+  url: scopes/weave-hq-scopes.yml
 - type: GitHubOrganization
   url: https://github.com/getweave
 - type: LinkedIn
