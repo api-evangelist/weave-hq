@@ -203,6 +203,8 @@ apis:
     unsubscribe a client to one or many event streams (calls, messages, appointments,
     payments, forms) so integrations can react to activity in near real time.
 common:
+- type: AgenticAccess
+  url: agentic-access/weave-hq-agentic-access.yml
 - type: TrustCenter
   url: security/weave-hq-trust-center.yml
 - type: VulnerabilityDisclosure
