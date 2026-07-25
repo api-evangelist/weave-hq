@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: Weave Contacts Forms API
+  description: 'The Weave API is the developer surface of the Weave customer/patient communication and payments platform for small healthcare businesses (dental, optometry, veterinary, medical, and specialty practices). It exposes REST resources across messaging (SMS/text), phone and calls, contacts, scheduling and appointments, payments, digital forms, reviews, and event subscriptions.
+
+
+    Base URL is https://api.weaveconnect.com. Requests are authenticated with an OAuth 2.0 bearer access token issued by Weave''s OIDC provider (https://oidc.weaveconnect.com, token endpoint under https://auth.weaveconnect.com/oauth2/default) and are scoped to a location (sub-account); the location is identified by a `location_id` query parameter or header on most endpoints.
+
+
+    Grounding note: the public Weave Developer Portal (https://dp.getweave.com) requires a developer login, so the authoritative request/response schemas could not be read directly. The paths and base URL below are grounded in Weave''s own published Developer Portal client (the app''s compiled configuration and API calls against https://api.weaveconnect.com). Path coverage is therefore high-confidence, while request bodies, query parameters, and response schemas are modeled and should be reconciled against the official reference once portal access is available.'
+  version: '1.0'
+  contact:
+    name: Weave
+    url: https://www.getweave.com
+  license:
+    name: Proprietary
+    url: https://www.getweave.com/legal/terms/
+servers:
+- url: https://api.weaveconnect.com
+  description: Weave production API
+security:
+- oauth2: []
+- bearerAuth: []
+tags:
+- name: Forms
+  description: Weave Digital Forms - templates, links, and submissions.
+paths:
+  /v1/forms:
+    get:
+      operationId: listForms
+      tags:
+      - Forms
+      summary: List forms
+      description: Lists the digital forms configured for a location.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of forms.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Form'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/digitalforms:
+    get:
+      operationId: listDigitalForms
+      tags:
+      - Forms
+      summary: List digital form templates
+      description: Lists the digital-form templates available to a location.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of digital form templates.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Form'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/create-form-links:
+    post:
+      operationId: createFormLinks
+      tags:
+      - Forms
+      summary: Create form links
+      description: Generates patient-facing links to one or more forms for sending.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                form_ids:
+                  type: array
+                  items:
+                    type: string
+                person_id:
+                  type: string
+      responses:
+        '200':
+          description: The generated form links.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      type: string
+                      format: uri
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/retrieve-forms:
+    get:
+      operationId: retrieveForms
+      tags:
+      - Forms
+      summary: Retrieve submitted forms
+      description: Retrieves submitted form documents for a location.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of submitted forms.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/complete-form:
+    post:
+      operationId: completeForm
+      tags:
+      - Forms
+      summary: Mark a form submission complete
+      description: Marks a submitted form as complete/processed.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                submission_id:
+                  type: string
+      responses:
+        '200':
+          description: Completion confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Form:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        active:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+  parameters:
+    LocationId:
+      name: location_id
+      in: query
+      required: false
+      description: The Weave location (sub-account) the request is scoped to. Required on most endpoints; may alternatively be supplied via a location header.
+      schema:
+        type: string
+        format: uuid
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: 'OAuth 2.0 access token issued by Weave''s OIDC provider. Authorization and token endpoints are served under https://auth.weaveconnect.com/oauth2/default (issuer https://oidc.weaveconnect.com). Present as `Authorization: Bearer ACCESS_TOKEN`.'
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.weaveconnect.com/oauth2/default/v1/authorize
+          tokenUrl: https://auth.weaveconnect.com/oauth2/default/v1/token
+          scopes: {}
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'OAuth 2.0 bearer access token passed as `Authorization: Bearer ACCESS_TOKEN`.'

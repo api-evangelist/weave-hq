@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Weave Contacts Payments API
+  description: 'The Weave API is the developer surface of the Weave customer/patient communication and payments platform for small healthcare businesses (dental, optometry, veterinary, medical, and specialty practices). It exposes REST resources across messaging (SMS/text), phone and calls, contacts, scheduling and appointments, payments, digital forms, reviews, and event subscriptions.
+
+
+    Base URL is https://api.weaveconnect.com. Requests are authenticated with an OAuth 2.0 bearer access token issued by Weave''s OIDC provider (https://oidc.weaveconnect.com, token endpoint under https://auth.weaveconnect.com/oauth2/default) and are scoped to a location (sub-account); the location is identified by a `location_id` query parameter or header on most endpoints.
+
+
+    Grounding note: the public Weave Developer Portal (https://dp.getweave.com) requires a developer login, so the authoritative request/response schemas could not be read directly. The paths and base URL below are grounded in Weave''s own published Developer Portal client (the app''s compiled configuration and API calls against https://api.weaveconnect.com). Path coverage is therefore high-confidence, while request bodies, query parameters, and response schemas are modeled and should be reconciled against the official reference once portal access is available.'
+  version: '1.0'
+  contact:
+    name: Weave
+    url: https://www.getweave.com
+  license:
+    name: Proprietary
+    url: https://www.getweave.com/legal/terms/
+servers:
+- url: https://api.weaveconnect.com
+  description: Weave production API
+security:
+- oauth2: []
+- bearerAuth: []
+tags:
+- name: Payments
+  description: Weave Payments methods (text-to-pay, card-on-file).
+paths:
+  /v1/payment-methods:
+    get:
+      operationId: listPaymentMethods
+      tags:
+      - Payments
+      summary: List payment methods
+      description: Lists stored payment methods (cards on file) for a location's patients.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of payment methods.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/finance/account/payment_methods:
+    get:
+      operationId: listFinanceAccountPaymentMethods
+      tags:
+      - Payments
+      summary: List finance-account payment methods
+      description: Lists the payment methods attached to the location's Weave Payments finance account.
+      parameters:
+      - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of finance-account payment methods.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        person_id:
+          type: string
+          format: uuid
+        brand:
+          type: string
+        last4:
+          type: string
+        exp_month:
+          type: integer
+        exp_year:
+          type: integer
+  parameters:
+    LocationId:
+      name: location_id
+      in: query
+      required: false
+      description: The Weave location (sub-account) the request is scoped to. Required on most endpoints; may alternatively be supplied via a location header.
+      schema:
+        type: string
+        format: uuid
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: 'OAuth 2.0 access token issued by Weave''s OIDC provider. Authorization and token endpoints are served under https://auth.weaveconnect.com/oauth2/default (issuer https://oidc.weaveconnect.com). Present as `Authorization: Bearer ACCESS_TOKEN`.'
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.weaveconnect.com/oauth2/default/v1/authorize
+          tokenUrl: https://auth.weaveconnect.com/oauth2/default/v1/token
+          scopes: {}
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'OAuth 2.0 bearer access token passed as `Authorization: Bearer ACCESS_TOKEN`.'
