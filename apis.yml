@@ -13,7 +13,20 @@ description: Weave is an all-in-one customer and patient communication and payme
   authenticated with OAuth 2.0 bearer tokens issued through Weave's OIDC provider.
   The public API reference is published in the Weave Developer Portal at
   dp.getweave.com, which requires a developer login.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: paid
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Paid · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/weave-hq.png
 tags:
 - Communication
 - Healthcare
@@ -29,179 +42,166 @@ created: '2026-07-03'
 modified: '2026-07-03'
 specificationVersion: '0.19'
 apis:
-- aid: weave-hq:weave-hq-messaging-api
-  name: Weave Messaging API
-  tags:
-  - Messaging
-  - SMS
-  - Texting
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
-  properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: https://dp.getweave.com
-    type: APIReference
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Send and retrieve two-way SMS/text messages between a practice and its
-    patients, review message history, pull chart-thread messages, check bulk-message
-    quota, and manage the SMS phone numbers associated with a location. Includes the
-    Quick Fill messaging surface used to text open-appointment offers.
-- aid: weave-hq:weave-hq-phone-calls-api
-  name: Weave Phone & Calls API
-  tags:
-  - Phone
-  - VoIP
-  - Calls
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
-  properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Access the Weave VoIP phone system - list call records and call
-    recordings, request signed URLs to download recordings, read and tag voicemails,
-    inspect call queues and their metrics, and list department phone numbers.
 - aid: weave-hq:weave-hq-contacts-api
   name: Weave Contacts API
+  description: Patient/customer contacts and contact info.
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
   tags:
   - Contacts
-  - Persons
-  - CRM
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
   properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Manage the people (patients/customers) a practice communicates with -
-    list and search contacts, read contact info records, and block or unblock a
-    contact from receiving messages.
-- aid: weave-hq:weave-hq-scheduling-api
-  name: Weave Scheduling & Appointments API
-  tags:
-  - Scheduling
-  - Appointments
-  - Calendar
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
-  properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Read and manage appointments, appointment types, schedules, and
-    calendar events; submit online booking requests; and pull online-scheduling
-    reporting. Backs Weave's online scheduling and appointment-reminder features.
-- aid: weave-hq:weave-hq-payments-api
-  name: Weave Payments API
-  tags:
-  - Payments
-  - Text to Pay
-  - Billing
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
-  properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: https://getweave.com/legal/payments/
-    type: TermsOfService
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Access Weave Payments - list a practice account's stored payment
-    methods and finance-account payment methods that back text-to-pay, card-on-file,
-    and in-office payment collection.
-- aid: weave-hq:weave-hq-forms-api
-  name: Weave Digital Forms API
-  tags:
-  - Forms
-  - Digital Forms
-  - Intake
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
-  properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Work with Weave Digital Forms - list forms and digital-form templates,
-    generate patient-facing form links, retrieve submitted forms, and mark a form
-    submission complete. Powers digital intake and medical-history collection.
-- aid: weave-hq:weave-hq-reviews-api
-  name: Weave Reviews API
-  tags:
-  - Reviews
-  - Reputation
-  - Listings
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://dp.getweave.com
-  baseURL: https://api.weaveconnect.com
-  properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Support Weave's review-generation and reputation features - read
-    provider review data, check review-request completion, and inspect the status of
-    a location's online business listing.
+  - type: OpenAPI
+    url: openapi/weave-hq-contacts-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
 - aid: weave-hq:weave-hq-events-api
-  name: Weave Events & Subscriptions API
+  name: Weave Events API
+  description: Platform events and subscription management.
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
   tags:
   - Events
-  - Webhooks
-  - Subscriptions
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  properties:
+  - type: OpenAPI
+    url: openapi/weave-hq-events-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
+- aid: weave-hq:weave-hq-forms-api
+  name: Weave Forms API
+  description: Weave Digital Forms - templates, links, and submissions.
   humanURL: https://dp.getweave.com
   baseURL: https://api.weaveconnect.com
+  tags:
+  - Forms
   properties:
-  - url: https://dp.getweave.com
-    type: Documentation
-  - url: openapi/weave-hq-openapi.yml
-    type: OpenAPI
-  - url: collections/weave-hq.postman_collection.json
-    type: PostmanCollection
-  - url: collections/weave-hq.opencollection.json
-    type: OpenCollection
-  description: Read platform events and manage event subscriptions - subscribe or
-    unsubscribe a client to one or many event streams (calls, messages, appointments,
-    payments, forms) so integrations can react to activity in near real time.
+  - type: OpenAPI
+    url: openapi/weave-hq-forms-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
+- aid: weave-hq:weave-hq-messaging-api
+  name: Weave Messaging API
+  description: Two-way SMS/text messaging with patients.
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
+  tags:
+  - Messaging
+  properties:
+  - type: OpenAPI
+    url: openapi/weave-hq-messaging-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
+- aid: weave-hq:weave-hq-payments-api
+  name: Weave Payments API
+  description: Weave Payments methods (text-to-pay, card-on-file).
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
+  tags:
+  - Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/weave-hq-payments-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
+- aid: weave-hq:weave-hq-phone-calls-api
+  name: Weave Phone & Calls API
+  description: VoIP call records, recordings, voicemails, and call queues.
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
+  tags:
+  - Phone & Calls
+  properties:
+  - type: OpenAPI
+    url: openapi/weave-hq-phone-calls-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
+- aid: weave-hq:weave-hq-reviews-api
+  name: Weave Reviews API
+  description: Review generation, reputation, and business listings.
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
+  tags:
+  - Reviews
+  properties:
+  - type: OpenAPI
+    url: openapi/weave-hq-reviews-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
+- aid: weave-hq:weave-hq-scheduling-api
+  name: Weave Scheduling API
+  description: Appointments, appointment types, schedules, and calendar events.
+  humanURL: https://dp.getweave.com
+  baseURL: https://api.weaveconnect.com
+  tags:
+  - Scheduling
+  properties:
+  - type: OpenAPI
+    url: openapi/weave-hq-scheduling-api-openapi.yml
+  - type: Documentation
+    url: https://dp.getweave.com
+  - type: APIReference
+    url: https://dp.getweave.com
+  - type: PostmanCollection
+    url: collections/weave-hq.postman_collection.json
+  - type: OpenCollection
+    url: collections/weave-hq.opencollection.json
+  - type: TermsOfService
+    url: https://getweave.com/legal/payments/
 common:
 - type: AgenticAccess
   url: agentic-access/weave-hq-agentic-access.yml
