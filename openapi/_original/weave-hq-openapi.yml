@@ -1,0 +1,1282 @@
+openapi: 3.0.3
+info:
+  title: Weave API
+  description: >-
+    The Weave API is the developer surface of the Weave customer/patient
+    communication and payments platform for small healthcare businesses (dental,
+    optometry, veterinary, medical, and specialty practices). It exposes REST
+    resources across messaging (SMS/text), phone and calls, contacts, scheduling
+    and appointments, payments, digital forms, reviews, and event subscriptions.
+
+
+    Base URL is https://api.weaveconnect.com. Requests are authenticated with an
+    OAuth 2.0 bearer access token issued by Weave's OIDC provider
+    (https://oidc.weaveconnect.com, token endpoint under
+    https://auth.weaveconnect.com/oauth2/default) and are scoped to a location
+    (sub-account); the location is identified by a `location_id` query parameter
+    or header on most endpoints.
+
+
+    Grounding note: the public Weave Developer Portal (https://dp.getweave.com)
+    requires a developer login, so the authoritative request/response schemas
+    could not be read directly. The paths and base URL below are grounded in
+    Weave's own published Developer Portal client (the app's compiled
+    configuration and API calls against https://api.weaveconnect.com). Path
+    coverage is therefore high-confidence, while request bodies, query
+    parameters, and response schemas are modeled and should be reconciled against
+    the official reference once portal access is available.
+  version: '1.0'
+  contact:
+    name: Weave
+    url: https://www.getweave.com
+  license:
+    name: Proprietary
+    url: https://www.getweave.com/legal/terms/
+servers:
+  - url: https://api.weaveconnect.com
+    description: Weave production API
+security:
+  - oauth2: []
+  - bearerAuth: []
+tags:
+  - name: Messaging
+    description: Two-way SMS/text messaging with patients.
+  - name: Phone & Calls
+    description: VoIP call records, recordings, voicemails, and call queues.
+  - name: Contacts
+    description: Patient/customer contacts and contact info.
+  - name: Scheduling
+    description: Appointments, appointment types, schedules, and calendar events.
+  - name: Payments
+    description: Weave Payments methods (text-to-pay, card-on-file).
+  - name: Forms
+    description: Weave Digital Forms - templates, links, and submissions.
+  - name: Reviews
+    description: Review generation, reputation, and business listings.
+  - name: Events
+    description: Platform events and subscription management.
+paths:
+  /v1/messages:
+    get:
+      operationId: listMessages
+      tags:
+        - Messaging
+      summary: List messages
+      description: Lists SMS/text messages for a location, most recent first.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - name: person_id
+          in: query
+          required: false
+          description: Filter to messages exchanged with a specific contact.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A list of messages.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: sendMessage
+      tags:
+        - Messaging
+      summary: Send a message
+      description: Sends an SMS/text message from the location to a patient.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageInput'
+      responses:
+        '200':
+          description: The sent message.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /v1/chart-messages:
+    get:
+      operationId: listChartMessages
+      tags:
+        - Messaging
+      summary: List chart-thread messages
+      description: Lists messages within a patient chart/message thread.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - name: person_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of chart messages.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/account/bulk-message-quota:
+    get:
+      operationId: getBulkMessageQuota
+      tags:
+        - Messaging
+      summary: Get bulk-message quota
+      description: Returns the remaining bulk (mass-text) message quota for the account.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: Bulk message quota.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quota:
+                    type: integer
+                  used:
+                    type: integer
+                  remaining:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/sms-phone-numbers:
+    get:
+      operationId: listSmsPhoneNumbers
+      tags:
+        - Messaging
+      summary: List SMS phone numbers
+      description: Lists the SMS-capable phone numbers configured for the location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of SMS phone numbers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PhoneNumber'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/quick-fill/message/send:
+    post:
+      operationId: sendQuickFillMessage
+      tags:
+        - Messaging
+      summary: Send a Quick Fill message
+      description: >-
+        Texts an open-appointment (Quick Fill) offer to one or more contacts to
+        fill a newly available slot.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                person_ids:
+                  type: array
+                  items:
+                    type: string
+                body:
+                  type: string
+      responses:
+        '200':
+          description: Quick Fill send result.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/quick-fill/message/history:
+    get:
+      operationId: getQuickFillMessageHistory
+      tags:
+        - Messaging
+      summary: Get Quick Fill message history
+      description: Returns the history of Quick Fill messages sent from the location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: Quick Fill message history.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/call-records:
+    get:
+      operationId: listCallRecords
+      tags:
+        - Phone & Calls
+      summary: List call records
+      description: Lists inbound and outbound call records for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A list of call records.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CallRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/call-recordings:
+    get:
+      operationId: listCallRecordings
+      tags:
+        - Phone & Calls
+      summary: List call recordings
+      description: Lists available call recordings for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of call recordings.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CallRecording'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/call-recording/signed-url:
+    get:
+      operationId: getCallRecordingSignedUrl
+      tags:
+        - Phone & Calls
+      summary: Get a call recording signed URL
+      description: Returns a short-lived signed URL to download a specific call recording.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - name: recording_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A signed download URL.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                  expires_at:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/voicemail-messages:
+    get:
+      operationId: listVoicemailMessages
+      tags:
+        - Phone & Calls
+      summary: List voicemail messages
+      description: Lists voicemail messages for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of voicemails.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voicemail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/call-queues:
+    get:
+      operationId: listCallQueues
+      tags:
+        - Phone & Calls
+      summary: List call queues
+      description: Lists the call queues configured for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of call queues.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/call-queues/metrics:
+    get:
+      operationId: getCallQueueMetrics
+      tags:
+        - Phone & Calls
+      summary: Get call queue metrics
+      description: Returns performance metrics for the location's call queues.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: Call queue metrics.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/department/phone-numbers:
+    get:
+      operationId: listDepartmentPhoneNumbers
+      tags:
+        - Phone & Calls
+      summary: List department phone numbers
+      description: Lists phone numbers assigned to departments within a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of department phone numbers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PhoneNumber'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/contacts:
+    get:
+      operationId: listContacts
+      tags:
+        - Contacts
+      summary: List contacts
+      description: Lists the contacts (patients/customers) for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A list of contacts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/contacts/search:
+    post:
+      operationId: searchContacts
+      tags:
+        - Contacts
+      summary: Search contacts
+      description: Searches contacts by name, phone, email, or other attributes.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+      responses:
+        '200':
+          description: Matching contacts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/contact-infos:
+    get:
+      operationId: listContactInfos
+      tags:
+        - Contacts
+      summary: List contact info records
+      description: Lists contact-info records (phone numbers, emails) for a location's contacts.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of contact info records.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/contacts/block:
+    post:
+      operationId: blockContact
+      tags:
+        - Contacts
+      summary: Block a contact
+      description: Blocks a contact from receiving messages from the location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                person_id:
+                  type: string
+      responses:
+        '200':
+          description: Block confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/contacts/unblock:
+    post:
+      operationId: unblockContact
+      tags:
+        - Contacts
+      summary: Unblock a contact
+      description: Unblocks a previously blocked contact.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                person_id:
+                  type: string
+      responses:
+        '200':
+          description: Unblock confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/appointments:
+    get:
+      operationId: listAppointments
+      tags:
+        - Scheduling
+      summary: List appointments
+      description: Lists appointments for a location within an optional date range.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: A list of appointments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Appointment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/appointment-types:
+    get:
+      operationId: listAppointmentTypes
+      tags:
+        - Scheduling
+      summary: List appointment types
+      description: Lists the appointment types configured for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of appointment types.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v3/schedules:
+    get:
+      operationId: listSchedules
+      tags:
+        - Scheduling
+      summary: List schedules
+      description: Lists provider/operatory schedules available for online booking.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of schedules.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v3/calendars/events:
+    get:
+      operationId: listCalendarEvents
+      tags:
+        - Scheduling
+      summary: List calendar events
+      description: Lists calendar events for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of calendar events.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/booking/email-request:
+    post:
+      operationId: createBookingEmailRequest
+      tags:
+        - Scheduling
+      summary: Submit an online booking request
+      description: Submits an online booking (appointment request) to the practice.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Booking request accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/payment-methods:
+    get:
+      operationId: listPaymentMethods
+      tags:
+        - Payments
+      summary: List payment methods
+      description: Lists stored payment methods (cards on file) for a location's patients.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of payment methods.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/finance/account/payment_methods:
+    get:
+      operationId: listFinanceAccountPaymentMethods
+      tags:
+        - Payments
+      summary: List finance-account payment methods
+      description: Lists the payment methods attached to the location's Weave Payments finance account.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of finance-account payment methods.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/forms:
+    get:
+      operationId: listForms
+      tags:
+        - Forms
+      summary: List forms
+      description: Lists the digital forms configured for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of forms.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Form'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/digitalforms:
+    get:
+      operationId: listDigitalForms
+      tags:
+        - Forms
+      summary: List digital form templates
+      description: Lists the digital-form templates available to a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of digital form templates.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Form'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/create-form-links:
+    post:
+      operationId: createFormLinks
+      tags:
+        - Forms
+      summary: Create form links
+      description: Generates patient-facing links to one or more forms for sending.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                form_ids:
+                  type: array
+                  items:
+                    type: string
+                person_id:
+                  type: string
+      responses:
+        '200':
+          description: The generated form links.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      type: string
+                      format: uri
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/retrieve-forms:
+    get:
+      operationId: retrieveForms
+      tags:
+        - Forms
+      summary: Retrieve submitted forms
+      description: Retrieves submitted form documents for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: A list of submitted forms.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/complete-form:
+    post:
+      operationId: completeForm
+      tags:
+        - Forms
+      summary: Mark a form submission complete
+      description: Marks a submitted form as complete/processed.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                submission_id:
+                  type: string
+      responses:
+        '200':
+          description: Completion confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/provider-review:
+    get:
+      operationId: getProviderReview
+      tags:
+        - Reviews
+      summary: Get provider review data
+      description: Returns review data associated with a provider/location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: Provider review data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/review/completion:
+    get:
+      operationId: getReviewCompletion
+      tags:
+        - Reviews
+      summary: Get review-request completion
+      description: Returns completion status/metrics for review requests sent from a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: Review completion data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/kiosk/listing-status:
+    get:
+      operationId: getListingStatus
+      tags:
+        - Reviews
+      summary: Get business listing status
+      description: Returns the status of the location's online business listing.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: Listing status.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/events:
+    get:
+      operationId: listEvents
+      tags:
+        - Events
+      summary: List events
+      description: Lists platform events (calls, messages, appointments, payments, forms) for a location.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A list of events.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/subscribe:
+    post:
+      operationId: subscribe
+      tags:
+        - Events
+      summary: Subscribe to an event stream
+      description: Subscribes a client to a single event stream/topic.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic:
+                  type: string
+      responses:
+        '200':
+          description: Subscription confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/subscribe/multi:
+    post:
+      operationId: subscribeMulti
+      tags:
+        - Events
+      summary: Subscribe to multiple event streams
+      description: Subscribes a client to multiple event streams/topics at once.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topics:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Subscription confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/unsubscribe:
+    post:
+      operationId: unsubscribe
+      tags:
+        - Events
+      summary: Unsubscribe from an event stream
+      description: Unsubscribes a client from an event stream/topic.
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic:
+                  type: string
+      responses:
+        '200':
+          description: Unsubscribe confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: >-
+        OAuth 2.0 access token issued by Weave's OIDC provider. Authorization and
+        token endpoints are served under https://auth.weaveconnect.com/oauth2/default
+        (issuer https://oidc.weaveconnect.com). Present as
+        `Authorization: Bearer ACCESS_TOKEN`.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.weaveconnect.com/oauth2/default/v1/authorize
+          tokenUrl: https://auth.weaveconnect.com/oauth2/default/v1/token
+          scopes: {}
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: "OAuth 2.0 bearer access token passed as `Authorization: Bearer ACCESS_TOKEN`."
+  parameters:
+    LocationId:
+      name: location_id
+      in: query
+      required: false
+      description: >-
+        The Weave location (sub-account) the request is scoped to. Required on
+        most endpoints; may alternatively be supplied via a location header.
+      schema:
+        type: string
+        format: uuid
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return.
+      schema:
+        type: integer
+        default: 50
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        location_id:
+          type: string
+          format: uuid
+        person_id:
+          type: string
+          format: uuid
+        direction:
+          type: string
+          enum:
+            - inbound
+            - outbound
+        body:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    MessageInput:
+      type: object
+      required:
+        - person_id
+        - body
+      properties:
+        person_id:
+          type: string
+        body:
+          type: string
+        media_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+    PhoneNumber:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        label:
+          type: string
+    CallRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        direction:
+          type: string
+          enum:
+            - inbound
+            - outbound
+        from:
+          type: string
+        to:
+          type: string
+        duration_seconds:
+          type: integer
+        person_id:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+    CallRecording:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        call_record_id:
+          type: string
+          format: uuid
+        duration_seconds:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+    Voicemail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        from:
+          type: string
+        duration_seconds:
+          type: integer
+        viewed:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        mobile_phone:
+          type: string
+        email:
+          type: string
+          format: email
+        blocked:
+          type: boolean
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        person_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        status:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        provider:
+          type: string
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        person_id:
+          type: string
+          format: uuid
+        brand:
+          type: string
+        last4:
+          type: string
+        exp_month:
+          type: integer
+        exp_year:
+          type: integer
+    Form:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        active:
+          type: boolean
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          description: Event type, e.g. call.completed, message.received, appointment.updated, payment.succeeded, form.submitted.
+        location_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        data:
+          type: object
+          additionalProperties: true

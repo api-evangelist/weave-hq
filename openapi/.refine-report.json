@@ -1,0 +1,28 @@
+{
+  "provider": "weave-hq",
+  "sources": [
+    "weave-hq-contacts-api-openapi.yml",
+    "weave-hq-events-api-openapi.yml",
+    "weave-hq-forms-api-openapi.yml",
+    "weave-hq-messaging-api-openapi.yml",
+    "weave-hq-payments-api-openapi.yml",
+    "weave-hq-phone-calls-api-openapi.yml",
+    "weave-hq-reviews-api-openapi.yml",
+    "weave-hq-scheduling-api-openapi.yml"
+  ],
+  "outputs": [
+    "weave-hq-contacts-api-openapi.yml",
+    "weave-hq-events-api-openapi.yml",
+    "weave-hq-forms-api-openapi.yml",
+    "weave-hq-messaging-api-openapi.yml",
+    "weave-hq-payments-api-openapi.yml",
+    "weave-hq-phone-calls-api-openapi.yml",
+    "weave-hq-reviews-api-openapi.yml",
+    "weave-hq-scheduling-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
